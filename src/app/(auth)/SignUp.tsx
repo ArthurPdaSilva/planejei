@@ -1,9 +1,16 @@
-import { Text, View } from "react-native";
+import { useSignUp } from "@/src/hooks/useSignUp";
+import { SignUpScreen } from "@/src/screens/SignUp";
 
 export default function SignUp() {
+	const { control, isSubmitting, errors, handleSubmit, onSubmit } = useSignUp();
+
 	return (
-		<View>
-			<Text>SignUp</Text>
-		</View>
+		<SignUpScreen
+			control={control}
+			isSubmitting={isSubmitting}
+			errors={errors}
+			handleSubmit={handleSubmit}
+			onSubmit={onSubmit}
+		/>
 	);
 }

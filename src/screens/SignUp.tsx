@@ -16,23 +16,23 @@ import {
 	View,
 } from "react-native";
 import { COLORS } from "../constants/colors";
-import type { SignInFormData } from "../hooks/useSignIn";
+import type { SignUpFormData } from "../hooks/useSignUp";
 
-type SignInScreenProps = {
-	control: Control<SignInFormData>;
+type SignUpScreenProps = {
+	control: Control<SignUpFormData>;
 	isSubmitting: boolean;
-	errors: FieldErrors<SignInFormData>;
-	handleSubmit: UseFormHandleSubmit<SignInFormData>;
-	onSubmit: (data: SignInFormData) => Promise<void>;
+	errors: FieldErrors<SignUpFormData>;
+	handleSubmit: UseFormHandleSubmit<SignUpFormData>;
+	onSubmit: (data: SignUpFormData) => Promise<void>;
 };
 
-export const SignInScreen = ({
+export const SignUpScreen = ({
 	control,
 	isSubmitting,
 	errors,
 	handleSubmit,
 	onSubmit,
-}: SignInScreenProps) => {
+}: SignUpScreenProps) => {
 	return (
 		<ScrollView
 			showsVerticalScrollIndicator={false}
@@ -42,6 +42,29 @@ export const SignInScreen = ({
 			<View style={styles.centerView}>
 				<StatusBar backgroundColor={COLORS.zinc} barStyle="light-content" />
 				<Image source={require("../assets/logo.png")} style={styles.logo} />
+
+				<Controller
+					control={control}
+					name="username"
+					render={({ field: { onChange, onBlur, value } }) => (
+						<View>
+							<TextInput
+								placeholder="Digite seu nome completo..."
+								placeholderTextColor={COLORS.gray50}
+								style={styles.input}
+								autoCapitalize="none"
+								keyboardType="email-address"
+								autoComplete="email"
+								value={value}
+								onChangeText={onChange}
+								onBlur={onBlur}
+							/>
+							{errors.username && (
+								<Text style={styles.errorText}>{errors.username.message}</Text>
+							)}
+						</View>
+					)}
+				/>
 
 				<Controller
 					control={control}
@@ -89,17 +112,43 @@ export const SignInScreen = ({
 					)}
 				/>
 
+				<Controller
+					control={control}
+					name="confirmPassword"
+					render={({ field: { onChange, onBlur, value } }) => (
+						<View>
+							<TextInput
+								placeholder="Digite novamente sua senha..."
+								placeholderTextColor={COLORS.gray50}
+								style={styles.input}
+								secureTextEntry
+								autoCapitalize="none"
+								autoComplete="password"
+								value={value}
+								onChangeText={onChange}
+								onBlur={onBlur}
+							/>
+							{errors.confirmPassword && (
+								<Text style={styles.errorText}>
+									{errors.confirmPassword.message}
+								</Text>
+							)}
+						</View>
+					)}
+				/>
+
 				<TouchableOpacity
 					style={styles.button}
 					onPress={handleSubmit(onSubmit)}
+					disabled={isSubmitting}
 				>
 					<Text style={styles.buttonText}>
-						{isSubmitting ? "Acessando..." : "Acessar conta"}
+						{isSubmitting ? "Criando conta..." : "Criar conta"}
 					</Text>
 				</TouchableOpacity>
 
-				<Link href="/(auth)/SignUp" style={styles.link}>
-					Não tem uma conta? Cadastre-se
+				<Link href="/(auth)/SignIn" style={styles.link}>
+					Já tem uma conta? Faça login
 				</Link>
 			</View>
 		</ScrollView>

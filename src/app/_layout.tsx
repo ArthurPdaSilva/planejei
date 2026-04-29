@@ -1,18 +1,17 @@
 import { router, Stack } from "expo-router";
 import { useEffect } from "react";
+import { supabase } from "../configs/supabase";
 
 export default function RootLayout() {
 	useEffect(() => {
-		const signed = false;
-
-		// Garantir que a navegação ocorra após a renderização do componente
-		requestAnimationFrame(() => {
-			if (!signed) {
-				router.replace("/(auth)/SignIn");
+		supabase.auth.onAuthStateChange((_event, session) => {
+			if (session) {
+				console.log("Usuário autenticado!");
+				router.replace("/(panel)/Home");
 				return;
 			}
-
-			router.replace("/(panel)/Home");
+			console.log("Usuário não autenticado!");
+			router.replace("/(auth)/SignIn");
 		});
 	}, []);
 
