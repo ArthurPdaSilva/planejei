@@ -85,6 +85,22 @@ export const HomeScreen = ({ travels, loading }: HomeScreenProps) => {
 					</View>
 				</View>
 
+				{travels && travels.length === 0 && (
+					<View
+						style={{
+							flex: 1,
+							justifyContent: "center",
+							alignItems: "center",
+						}}
+					>
+						<Text
+							style={{ color: COLORS.white, fontSize: 16, textAlign: "center" }}
+						>
+							Você ainda não planejou nenhuma viagem. Comece agora mesmo!
+						</Text>
+					</View>
+				)}
+
 				{/* Card viagem destaque*/}
 				{nextTravel && (
 					<View style={styles.highlightCard}>

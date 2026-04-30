@@ -1,9 +1,8 @@
-import { Text, View } from "react-native";
+import { useProfile } from "@/src/hooks/useProfile";
+import { ProfileScreen } from "@/src/screens/Profile";
 
 export default function Profile() {
-	return (
-		<View>
-			<Text>Profile</Text>
-		</View>
-	);
+	const { logout, loading, profile } = useProfile();
+
+	return <ProfileScreen logout={logout} loading={loading} profile={profile} />;
 }

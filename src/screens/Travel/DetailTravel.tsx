@@ -1,5 +1,6 @@
 import { LoadingComponent } from "@/src/components/Loading";
 import { COLORS } from "@/src/constants/colors";
+import type { UseRemindersReturn } from "@/src/hooks/useReminders";
 import type { Travel } from "@/src/hooks/useTravelList";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
@@ -7,9 +8,9 @@ import { ptBR } from "date-fns/locale/pt-BR";
 import { Link } from "expo-router";
 import { useCallback } from "react";
 import {
+	FlatList,
 	Platform,
 	Pressable,
-	ScrollView,
 	StyleSheet,
 	Text,
 	TextInput,
@@ -21,12 +22,14 @@ type DetailTravelScreenProps = {
 	travel: Travel | null;
 	loading: boolean;
 	handleDeleteTravel: () => Promise<void>;
+	remindersHook: UseRemindersReturn;
 };
 
 export const DetailTravelScreen = ({
 	loading,
 	travel,
 	handleDeleteTravel,
+	remindersHook,
 }: DetailTravelScreenProps) => {
 	const formatDate = useCallback((date: string) => {
 		return format(parseISO(date), "dd MMMM yyyy", {
@@ -58,7 +61,7 @@ export const DetailTravelScreen = ({
 					</Text>
 				</View>
 
-				<ScrollView showsVerticalScrollIndicator={false}>
+				<View>
 					<View style={[styles.infoRow, { marginBottom: 8 }]}>
 						<MaterialCommunityIcons
 							name="airplane-takeoff"
@@ -93,27 +96,37 @@ export const DetailTravelScreen = ({
 					<View style={styles.reminderInputContainer}>
 						<TextInput
 							placeholder="Digite um lembrete..."
+							value={remindersHook.newReminder}
+							onChangeText={remindersHook.setNewReminder}
 							style={styles.reminderInput}
 							placeholderTextColor={COLORS.gray100}
 						/>
 
-						<Pressable style={styles.addButton}>
+						<Pressable
+							style={styles.addButton}
+							onPress={remindersHook.addReminder}
+						>
 							<Text style={{ color: COLORS.white }}>+</Text>
 						</Pressable>
 					</View>
 
-					<View style={styles.spacingVertical}>
-						<View style={styles.reminderItem}>
-							<Text style={styles.reminderText}>
-								Lembrar de pegar a chave do AP
-							</Text>
-
-							<Pressable>
-								<Feather name="trash" size={20} color={COLORS.red} />
-							</Pressable>
-						</View>
-					</View>
-				</ScrollView>
+					<FlatList
+						data={remindersHook.reminders}
+						keyExtractor={(item) => item.id}
+						renderItem={({ item }) => (
+							<View style={styles.spacingVertical}>
+								<View style={styles.reminderItem}>
+									<Text style={styles.reminderText}>{item.description}</Text>
+									<Pressable
+										onPress={() => remindersHook.deleteReminder(item.id)}
+									>
+										<Feather name="trash" size={20} color={COLORS.red} />
+									</Pressable>
+								</View>
+							</View>
+						)}
+					/>
+				</View>
 			</View>
 		</SafeAreaView>
 	);
@@ -210,7 +223,7 @@ const styles = StyleSheet.create({
 		borderRadius: 4,
 	},
 	spacingVertical: {
-		marginBottom: 14,
+		marginBottom: 4,
 	},
 	reminderItem: {
 		backgroundColor: COLORS.gray200,
