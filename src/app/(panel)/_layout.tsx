@@ -6,6 +6,10 @@ export default function PanelLayout() {
 			<Stack.Screen name="Home" options={{ headerShown: false }} />
 			<Stack.Screen name="Profile" options={{ headerShown: false }} />
 			<Stack.Screen name="Travel/NewTravel" options={{ headerShown: false }} />
+			<Stack.Screen
+				name="Travel/Detail/[id]"
+				options={{ headerShown: false }}
+			/>
 		</Stack>
 	);
 }

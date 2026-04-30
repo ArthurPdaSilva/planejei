@@ -1,5 +1,8 @@
+import { useTravelList } from "@/src/hooks/useTravelList";
 import { HomeScreen } from "@/src/screens/Home";
 
 export default function Home() {
-	return <HomeScreen />;
+	const { travels, loading } = useTravelList();
+
+	return <HomeScreen travels={travels} loading={loading} />;
 }

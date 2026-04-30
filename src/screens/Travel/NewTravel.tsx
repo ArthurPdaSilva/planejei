@@ -1,3 +1,4 @@
+import { DatePickerInput } from "@/src/components/DatePickerInput";
 import { COLORS } from "@/src/constants/colors";
 import type { TravelFormData } from "@/src/hooks/useCreateTravel";
 import { Feather } from "@expo/vector-icons";
@@ -7,6 +8,7 @@ import {
 	Controller,
 	type FieldErrors,
 	type UseFormHandleSubmit,
+	useWatch,
 } from "react-hook-form";
 import {
 	Platform,
@@ -14,6 +16,7 @@ import {
 	StyleSheet,
 	Text,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -33,6 +36,11 @@ export default function NewTravelScreen({
 	handleSubmit,
 	createNewTravel,
 }: NewTravelScreenProps) {
+	const startDate = useWatch({
+		control,
+		name: "start_date",
+	});
+
 	return (
 		<SafeAreaView style={styles.safeArea}>
 			<ScrollView style={styles.container}>
@@ -114,25 +122,53 @@ export default function NewTravelScreen({
 				<Controller
 					control={control}
 					name="start_date"
-					render={({ field: { onChange, onBlur, value } }) => (
-						<View style={styles.field}>
-							<Text style={styles.label}>Selecione a data de ida...</Text>
-							<TextInput
-								placeholder="Digite a data de ida..."
-								placeholderTextColor={COLORS.gray50}
-								style={styles.input}
+					render={({ field: { onChange, value } }) => (
+						<>
+							<DatePickerInput
+								label="Selecione a data de ida"
 								value={value}
-								onChangeText={onChange}
-								onBlur={onBlur}
+								onChange={onChange}
 							/>
 							{errors.start_date && (
 								<Text style={styles.errorText}>
 									{errors.start_date.message}
 								</Text>
 							)}
-						</View>
+						</>
 					)}
 				/>
+
+				{startDate && (
+					<Controller
+						control={control}
+						name="end_date"
+						render={({ field: { onChange, value } }) => (
+							<>
+								<DatePickerInput
+									label="Selecione a data de volta"
+									minDate={startDate}
+									value={value}
+									onChange={onChange}
+								/>
+								{errors.end_date && (
+									<Text style={styles.errorText}>
+										{errors.end_date.message}
+									</Text>
+								)}
+							</>
+						)}
+					/>
+				)}
+
+				<TouchableOpacity
+					style={styles.button}
+					onPress={handleSubmit(createNewTravel)}
+					disabled={isSubmitting}
+				>
+					<Text style={styles.buttonText}>
+						{isSubmitting ? "Cadastrando..." : "Cadastrar Viagem"}
+					</Text>
+				</TouchableOpacity>
 			</ScrollView>
 		</SafeAreaView>
 	);
@@ -186,5 +222,16 @@ const styles = StyleSheet.create({
 	errorText: {
 		color: COLORS.red,
 		marginBottom: 8,
+	},
+	button: {
+		backgroundColor: COLORS.orange,
+		padding: 12,
+		borderRadius: 4,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	buttonText: {
+		color: COLORS.white,
+		fontWeight: "bold",
 	},
 });
